@@ -1,6 +1,7 @@
 # S3V4Signer
-Cross-platform S3 v4 URL Signer to upload files to s3
+~~Cross-platform~~ macOS S3 v4 URL Signer to upload files to s3
 
+TODO: Add Linux compatibility
 
 ```
 //create the signer

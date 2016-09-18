@@ -7,7 +7,11 @@
 //  https://github.com/csexton/csexton.github.com/blob/master/_posts/2016-03-20-signing-aws-api-requests-in-swift.md
 
 import Foundation
-import CCommonCrypto
+#if os(macOS)
+    import CCommonCrypto
+//#elseif os(Linux)
+//    import OpenSSL
+#endif
 
 class S3V4Signer: NSObject {
     
