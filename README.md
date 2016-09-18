@@ -4,6 +4,18 @@
 TODO: Add Linux compatibility
 
 ```
+//get the file
+let fileURL = URL.init(fileURLWithPath: path)
+let fileData = try! Data(contentsOf: fileURL)
+let bodyDigest = sha256_hexdigest(fileData)
+
+//create an URL Request
+let url = URL(string: "https://s3.amazonaws.com/\(bucket)/\(fileURL.lastPathComponent)")!
+let request = NSMutableURLRequest(url: url)
+let fileStream = InputStream(fileAtPath: path)!
+request.httpMethod = "PUT"
+request.httpBodyStream = fileStream
+
 //create the signer
 let signer = S3V4Signer(accessKey: key, secretKey: secret, regionName: region)
 //create the signed headers
