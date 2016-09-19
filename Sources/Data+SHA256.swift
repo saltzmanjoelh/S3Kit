@@ -15,7 +15,7 @@ import Foundation
 #endif
 
 // SHA-256 digest as a hex string
-func sha256_hexdigest(_ data : Data) -> String {
+public func sha256_hexdigest(_ data : Data) -> String {
     
     
     #if os(macOS)
