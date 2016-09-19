@@ -20,7 +20,7 @@ public struct S3V4Signer {
     let regionName: String
     let serviceName: String
     
-    init(accessKey: String, secretKey: String, regionName: String, serviceName: String = "s3") {
+    public init(accessKey: String, secretKey: String, regionName: String, serviceName: String = "s3") {
         self.accessKey = accessKey
         self.secretKey = secretKey
         self.regionName = regionName
