@@ -13,21 +13,21 @@ import Foundation
 //    import OpenSSL
 #endif
 
-class S3V4Signer: NSObject {
+public struct S3V4Signer {
     
     let accessKey: String
     let secretKey: String
     let regionName: String
     let serviceName: String
     
-    required init(accessKey: String, secretKey: String, regionName: String, serviceName: String = "s3") {
+    init(accessKey: String, secretKey: String, regionName: String, serviceName: String = "s3") {
         self.accessKey = accessKey
         self.secretKey = secretKey
         self.regionName = regionName
         self.serviceName = serviceName
     }
     
-    func signedHeaders(url: NSURL, bodyDigest: String, httpMethod: String = "PUT", date: NSDate = NSDate()) -> [String: String] {
+    public func signedHeaders(url: NSURL, bodyDigest: String, httpMethod: String = "PUT", date: NSDate = NSDate()) -> [String: String] {
         let datetime = timestamp(date: date)
         
         var headers = [
@@ -51,7 +51,7 @@ class S3V4Signer: NSObject {
         return path!
     }
     
-    func sha256(str: String) -> String {
+    public func sha256(str: String) -> String {
         let data = str.data(using: String.Encoding.utf8)!
         var hash =  [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
         _ = data.withUnsafeBytes{
