@@ -16,7 +16,7 @@ public enum S3UploaderError: Error {
     case keyNotFound
 }
 
-struct S3Uploader {
+public struct S3Uploader {
     static public func parseCredentials(at path:String) throws -> (key: String, secret: String) {
         //make sure that the file exists
         guard FileManager.default.fileExists(atPath: path) else {
