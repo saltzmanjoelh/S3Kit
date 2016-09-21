@@ -1,6 +1,6 @@
 //
 //  Data+CommonCrypto.swift
-//  S3V4Signer
+//  S3Uploader
 //
 //  Created by Joel Saltzman on 9/17/16.
 //

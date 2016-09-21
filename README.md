@@ -1,4 +1,4 @@
-# S3V4Signer
+# S3Uploader
 ~~Cross-platform~~ macOS S3 v4 URL Signer to upload files to s3
 
 TODO: Add Linux compatibility
@@ -17,7 +17,7 @@ request.httpMethod = "PUT"
 request.httpBodyStream = fileStream
 
 //create the signer
-let signer = S3V4Signer(accessKey: key, secretKey: secret, regionName: region)
+let signer = S3Uploader(accessKey: key, secretKey: secret, regionName: region)
 //create the signed headers
 let headers = signer.signedHeaders(url: url as NSURL, bodyDigest: bodyDigest)
 
