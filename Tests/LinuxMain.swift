@@ -1,6 +1,6 @@
 import XCTest
-@testable import S3UploaderTests
+@testable import S3KitTests
 
 XCTMain([
-     testCase(S3UploaderTests.allTests),
+     testCase(S3KitTests.allTests),
 ])

@@ -2,7 +2,7 @@ import PackageDescription
 
 #if os(macOS)
 let package = Package(
-    name: "S3Uploader",
+    name: "S3Kit",
     dependencies: [
         .Package(url: "https://github.com/saltzmanjoelh/CCommonCrypto.git", versions: Version(0,0,0)..<Version(10,0,0))
     ]
@@ -10,7 +10,7 @@ let package = Package(
 
 //#elseif os(Linux)
 //let package = Package(
-//    name: "S3Uploader",
+//    name: "S3Kit",
 //    dependencies: [
 //        .Package(url: "https://github.com/saltzmanjoelh/OpenSSL.git", versions: Version(0,0,0)..<Version(10,0,0))
 //    ]

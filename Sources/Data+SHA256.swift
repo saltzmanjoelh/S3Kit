@@ -1,6 +1,6 @@
 //
 //  Data+CommonCrypto.swift
-//  S3Uploader
+//  S3Kit
 //
 //  Created by Joel Saltzman on 9/17/16.
 //
