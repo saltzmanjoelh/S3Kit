@@ -49,18 +49,18 @@ public struct S3Uploader {
         
     }
     static public func upload(file fileURL: URL, to bucket: String, in region: String, key: String, secret: String) throws -> (data: NSData?, response: HTTPURLResponse) {
+        
+        let s3URL = URL(string: "https://\(bucket).s3.amazonaws.com/\(fileURL.lastPathComponent)")!
+        let signer = S3V4Signer(accessKey: key, secretKey: secret, regionName: region)//create the signer
+        
+        
         //get the file
         let fileData = try! Data(contentsOf: fileURL)
         let bodyDigest = sha256_hexdigest(fileData)
-        
-        //create the signer
-        let signer = S3V4Signer(accessKey: key, secretKey: secret, regionName: region)
-        
-        
-        //create an URL Request
-        let s3URL = URL(string: "https://s3.amazonaws.com/\(bucket)/\(fileURL.lastPathComponent)")!
-        let request = NSMutableURLRequest(url: s3URL)
         let fileStream = InputStream(fileAtPath: fileURL.path)!
+
+        //create an URL Request
+        let request = NSMutableURLRequest(url: s3URL)
         request.httpMethod = "PUT"
         request.httpBodyStream = fileStream
         
@@ -76,15 +76,13 @@ public struct S3Uploader {
         
         //send the request
         var data: NSData?, response: URLResponse?, error: NSError?
-        
         let semaphore = DispatchSemaphore(value: 0)
-        
-        URLSession.shared.dataTask(with: s3URL) {
+        URLSession.shared.dataTask(with: request as URLRequest) {
             data = $0 as NSData?; response = $1; error = $2 as NSError?
             semaphore.signal()
         }.resume()
-        
         let timeoutResult = semaphore.wait(timeout: DispatchTime.distantFuture)
+        
         if timeoutResult == .timedOut {
             throw S3UploaderError.timedOut
         }
@@ -94,7 +92,12 @@ public struct S3Uploader {
         guard let urlResponse = response as? HTTPURLResponse else {
             throw S3UploaderError.noResponse
         }
-        return (data!, urlResponse)
+        if urlResponse.statusCode != 200 {
+            throw S3UploaderError.noResponse
+        }
+        
+        
+        return (data! as NSData?, urlResponse)
     }
     
 }

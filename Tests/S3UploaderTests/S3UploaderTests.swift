@@ -6,13 +6,14 @@ class S3UploaderTests: XCTestCase {
     //change these
     let bucket = "saltzman.test"
     let region = "us-east-1"
-    let path = "/Users/joelsaltzman/Sites/S3Uploader/Tests/file.txt"
+    let path = "/Users/joelsaltzman/Sites/S3Uploader/Tests/file.tar"
     
-    //create a comma delimited file like: keyGoesHere,secreteGoesHere
+    
     var key = ""
     var secret = ""
     override func setUp() {
         do {
+            //create a comma delimited file like: keyGoesHere,secreteGoesHere
             let credentials = try S3Uploader.parseCredentials(at: "/Users/joelsaltzman/Sites/S3Uploader/s3Credentials.csv")
             key = credentials.key
             secret = credentials.secret
@@ -23,7 +24,7 @@ class S3UploaderTests: XCTestCase {
     
     func testS3Uploader() {
         
-        try! "testS3Uploader".write(toFile: path, atomically: false, encoding: String.Encoding.utf8)
+//        try! "testS3Uploader".write(toFile: path, atomically: false, encoding: String.Encoding.utf8)
         let fileURL = URL.init(fileURLWithPath: path)
         let fileData = try! Data(contentsOf: fileURL)
         let bodyDigest = sha256_hexdigest(fileData)
@@ -45,7 +46,7 @@ class S3UploaderTests: XCTestCase {
         }
         //don't forget the file details
         request.addValue("\(fileData.count)", forHTTPHeaderField: "Content-Length")
-        request.addValue("file/txt", forHTTPHeaderField: "Content-Type")
+        request.addValue("file/tar", forHTTPHeaderField: "Content-Type")
         
         //send the request
         var response: URLResponse?
@@ -59,7 +60,7 @@ class S3UploaderTests: XCTestCase {
             print(e)
         }
     }
-    
+    //TODO: top one works, bottom one doesnt. Also, uploading file.txt returns code 200 but file.zip gets 403
     
     func testUpload() {
 
