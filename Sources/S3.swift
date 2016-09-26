@@ -9,11 +9,13 @@
 import Foundation
 
 public enum S3KitError: Error {
-    case timedOut
-    case noResponse
-    case credentialFile(message: String)
+    case invalidCredentialFile(message: String)
     case secretNotFound
     case keyNotFound
+    case timedOut
+    case noResponse
+    case responseError(code: Int)
+    case invalidURL
 }
 
 public struct S3 {
@@ -32,19 +34,19 @@ public struct S3 {
     static private func parseCredentials(at path:String) throws -> (key: String, secret: String) {
         //make sure that the file exists
         guard FileManager.default.fileExists(atPath: path) else {
-            throw S3KitError.credentialFile(message: "Credentials file doesn't exist: \(path)")
+            throw S3KitError.invalidCredentialFile(message: "Credentials file doesn't exist: \(path)")
         }
         //open it
         guard let fileData = FileManager.default.contents(atPath: path) else {
-            throw S3KitError.credentialFile(message: "Unable to open credentials file: \(path)")
+            throw S3KitError.invalidCredentialFile(message: "Unable to open credentials file: \(path)")
         }
         //split by comma
         guard let file = String.init(data: fileData, encoding: String.Encoding.utf8) else {
-            throw S3KitError.credentialFile(message: "Unable to parse credentials file: \(path)")
+            throw S3KitError.invalidCredentialFile(message: "Unable to parse credentials file: \(path)")
         }
         var components = file.components(separatedBy: ",")
         guard components.count >= 2 else {
-            throw S3KitError.credentialFile(message: "Credentials file must have a key and secret separated by a comma")
+            throw S3KitError.invalidCredentialFile(message: "Credentials file must have a key and secret separated by a comma")
         }
         guard let secret = components.popLast()?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) else {
             throw S3KitError.secretNotFound
@@ -73,7 +75,7 @@ public struct S3 {
         request.httpBodyStream = fileStream
         
         //create the signed headers
-        let headers = try signer.signedHeaders(url: s3URL, bodyDigest: bodyDigest)
+        let headers = try signer.signedHeaders(url: s3URL, bodyDigest: bodyDigest, httpMethod: "PUT")
         //set the headers on an URLRequest
         for (key, value) in headers {
             request.addValue(value, forHTTPHeaderField: key)
@@ -108,4 +110,51 @@ public struct S3 {
         return (data! as NSData?, urlResponse)
     }
     
+    
+    
+    
+    public func objectExists(objectName: String, inBucket bucket: String, inRegion region: String = "us-east-1") throws -> Bool {
+        
+        let s3URL = URL(string: "https://\(bucket).s3.amazonaws.com/\(objectName)")!
+        let signer = S3V4Signer(accessKey: key, secretKey: secret, regionName: region)//create the signer
+        
+        //create an URL Request
+        let request = NSMutableURLRequest(url: s3URL)
+        request.httpMethod = "HEAD"
+        
+        //create the signed headers
+        let bodyDigest = sha256_hexdigest("".data(using: String.Encoding.utf8)!)
+        let headers = try signer.signedHeaders(url: s3URL, bodyDigest: bodyDigest, httpMethod: "HEAD")
+        //set the headers on an URLRequest
+        for (key, value) in headers {
+            request.addValue(value, forHTTPHeaderField: key)
+        }
+        
+        //send the request
+        var response: URLResponse?, error: NSError?
+        let semaphore = DispatchSemaphore(value: 0)
+        URLSession.shared.dataTask(with: request as URLRequest) {
+            response = $1; error = $2 as NSError?
+            var description = ""
+            if let data = $0 {
+                if let text = NSString(data:data, encoding:String.Encoding.utf8.rawValue) as? String {
+                    description += "\n\(text)"
+                }
+            }
+            print("request: \(request.allHTTPHeaderFields)\n\nresponse: \(response?.description)\n\ndescription: \(description)")
+            semaphore.signal()
+            }.resume()
+        let timeoutResult = semaphore.wait(timeout: DispatchTime.distantFuture)
+        
+        if timeoutResult == .timedOut {
+            throw S3KitError.timedOut
+        }
+        if error != nil {
+            throw error!
+        }
+        guard let urlResponse = response as? HTTPURLResponse else {
+            throw S3KitError.noResponse
+        }
+        return urlResponse.statusCode == 200
+    }
 }

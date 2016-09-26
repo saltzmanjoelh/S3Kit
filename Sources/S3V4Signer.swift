@@ -32,7 +32,7 @@ public struct S3V4Signer {
         self.serviceName = serviceName
     }
 
-    public func signedHeaders(url: URL, bodyDigest: String, httpMethod: String = "PUT", date: NSDate = NSDate()) throws -> [String: String] {
+    public func signedHeaders(url: URL, bodyDigest: String, httpMethod: String, date: NSDate = NSDate()) throws -> [String: String] {
         guard let host = url.host else {
             throw S3V4SignerError.invalidHost(host:url)
         }

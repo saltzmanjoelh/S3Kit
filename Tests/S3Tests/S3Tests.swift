@@ -11,10 +11,12 @@ class S3KitTests: XCTestCase {
     
     func testUpload() {
 
-        try! "some test text".write(toFile: path, atomically: false, encoding: String.Encoding.utf8)
-        let fileURL = URL.init(fileURLWithPath: path)
         do{
+            try! "some test text".write(toFile: path, atomically: false, encoding: String.Encoding.utf8)
+            let fileURL = URL.init(fileURLWithPath: path)
+            
             let result = try S3.with(credentials: credentialsPath).upload(file: fileURL, to: bucket)
+            
             var description = result.response.description
             if let data = result.data as? Data {
                 if let text = NSString(data:data, encoding:String.Encoding.utf8.rawValue) as? String {
@@ -22,6 +24,20 @@ class S3KitTests: XCTestCase {
                 }
             }
             XCTAssertEqual(result.response.statusCode, 200, description)
+        } catch let e {
+            XCTFail("\(e)")
+        }
+    }
+    
+    func testObjectExists() {
+        do{
+            try! "some test text".write(toFile: path, atomically: false, encoding: String.Encoding.utf8)
+            _ = try S3.with(credentials: credentialsPath).upload(file: URL.init(fileURLWithPath: path), to: bucket)
+            let fileName = URL(string: path)!.lastPathComponent
+            
+            let result = try S3.with(credentials: credentialsPath).objectExists(objectName: fileName, inBucket: bucket)
+            
+            XCTAssertTrue(result)
         } catch let e {
             XCTFail("\(e)")
         }
