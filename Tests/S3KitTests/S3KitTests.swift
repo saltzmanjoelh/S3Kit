@@ -9,9 +9,6 @@ class S3KitTests: XCTestCase {
     let path = "/tmp/\(UUID())"
     let credentialsPath = "/Users/joelsaltzman/Sites/S3Kit/s3Credentials.csv"
     
-    func testXcodeServerEmail(){
-        XCTFail()
-    }
     
     func testUpload() {
         
