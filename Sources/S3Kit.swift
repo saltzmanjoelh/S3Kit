@@ -60,7 +60,7 @@ public struct S3 {
     
     public func upload(file fileURL: URL, to bucket: String, in region: String = "us-east-1") throws -> (data: NSData?, response: HTTPURLResponse) {
         
-        let s3URL = URL(string: "https://\(bucket).s3.amazonaws.com/\(fileURL.lastPathComponent)")!
+        let s3URL = URL(string: "https://s3.amazonaws.com/\(bucket)/\(fileURL.lastPathComponent)")!
         let signer = S3V4Signer(accessKey: key, secretKey: secret, regionName: region)//create the signer
         
         
@@ -115,7 +115,7 @@ public struct S3 {
     
     public func objectExists(objectName: String, inBucket bucket: String, inRegion region: String = "us-east-1") throws -> Bool {
         
-        let s3URL = URL(string: "https://\(bucket).s3.amazonaws.com/\(objectName)")!
+        let s3URL = URL(string: "https://s3.amazonaws.com/\(bucket)/\(objectName)")!
         let signer = S3V4Signer(accessKey: key, secretKey: secret, regionName: region)//create the signer
         
         //create an URL Request

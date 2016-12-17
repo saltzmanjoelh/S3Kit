@@ -6,7 +6,7 @@ class S3KitTests: XCTestCase {
     //change these
     let bucket = "saltzman.test"
 //    let region = "us-east-1"
-    let path = "/Users/joelsaltzman/Sites/S3Kit/Tests/file.tar"
+    let path = "/tmp/\(UUID())"
     let credentialsPath = "/Users/joelsaltzman/Sites/S3Kit/s3Credentials.csv"
     
     func testXcodeServerEmail(){
