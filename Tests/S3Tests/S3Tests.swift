@@ -9,8 +9,12 @@ class S3KitTests: XCTestCase {
     let path = "/Users/joelsaltzman/Sites/S3Kit/Tests/file.tar"
     let credentialsPath = "/Users/joelsaltzman/Sites/S3Kit/s3Credentials.csv"
     
+    func testXcodeServerEmail(){
+        XCTFail()
+    }
+    
     func testUpload() {
-
+        
         do{
             try! "some test text".write(toFile: path, atomically: false, encoding: String.Encoding.utf8)
             let fileURL = URL.init(fileURLWithPath: path)
