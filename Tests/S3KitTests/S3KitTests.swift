@@ -6,8 +6,10 @@ class S3KitTests: XCTestCase {
     //change these
     let bucket = "saltzman.test"
 //    let region = "us-east-1"
-    let path = "/tmp/\(UUID())"
-    let credentialsPath = "/Users/joelsaltzman/Sites/S3Kit/s3Credentials.csv"
+    let key = "AKIAJYPKZDD7IU7HAYSQ"
+    let secret = "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"
+    let path = "/tmp/testfile.txt"
+//    let credentialsPath = "/Users/joelsaltzman/Sites/S3Kit/s3Credentials.csv"
     
     
     func testUpload() {
@@ -16,7 +18,7 @@ class S3KitTests: XCTestCase {
             try! "some test text".write(toFile: path, atomically: false, encoding: String.Encoding.utf8)
             let fileURL = URL.init(fileURLWithPath: path)
             
-            let result = try S3.with(credentials: credentialsPath).upload(file: fileURL, to: bucket)
+            let result = try S3.with(key: key, and: secret).upload(file: fileURL, to: bucket)
             
             var description = result.response.description
             if let data = result.data as? Data {
@@ -33,10 +35,10 @@ class S3KitTests: XCTestCase {
     func testObjectExists() {
         do{
             try! "some test text".write(toFile: path, atomically: false, encoding: String.Encoding.utf8)
-            _ = try S3.with(credentials: credentialsPath).upload(file: URL.init(fileURLWithPath: path), to: bucket)
+            _ = try S3.with(key: key, and: secret).upload(file: URL.init(fileURLWithPath: path), to: bucket)
             let fileName = URL(string: path)!.lastPathComponent
             
-            let result = try S3.with(credentials: credentialsPath).objectExists(objectName: fileName, inBucket: bucket)
+            let result = try S3.with(key: key, and: secret).objectExists(objectName: fileName, inBucket: bucket)
             
             XCTAssertTrue(result)
         } catch let e {

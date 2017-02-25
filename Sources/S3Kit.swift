@@ -16,6 +16,7 @@ public enum S3KitError: Error {
     case noResponse
     case responseError(code: Int)
     case invalidURL
+    case aws(message: String)
 }
 
 public struct S3 {
@@ -87,8 +88,10 @@ public struct S3 {
         //send the request
         var data: NSData?, response: URLResponse?, error: NSError?
         let semaphore = DispatchSemaphore(value: 0)
-        URLSession.shared.dataTask(with: request as URLRequest) {
-            data = $0 as NSData?; response = $1; error = $2 as NSError?
+        URLSession.shared.dataTask(with: request as URLRequest) { (d:Data?, r:URLResponse?, e:Error?) -> Void in
+            data = d as NSData?
+            response = r
+            error = e as NSError?
             semaphore.signal()
         }.resume()
         let timeoutResult = semaphore.wait(timeout: DispatchTime.distantFuture)
@@ -99,10 +102,20 @@ public struct S3 {
         if error != nil {
             throw error!
         }
+
+        
         guard let urlResponse = response as? HTTPURLResponse else {
             throw S3KitError.noResponse
         }
         if urlResponse.statusCode != 200 {
+            var description = ""
+            if data != nil {
+                if let text = NSString(data:data as! Data, encoding:String.Encoding.utf8.rawValue) as? String {
+                    description += "\n\(text)"
+                }
+                throw S3KitError.aws(message: description)
+                //            print("request: \(request.allHTTPHeaderFields)\n\nresponse: \(response?.description)\n\ndescription: \(description)")
+            }
             throw S3KitError.noResponse
         }
         
