@@ -1,5 +1,7 @@
 # S3Kit
 
+[![Build Status][image-1]][1] [![Swift Version][image-2]][2]
+
 Easily upload files to S3\. Doesn't work in Linux at the moment
 
 TODO: Add Linux compatibility
@@ -14,3 +16,8 @@ if let data = result.data as? Data {
     }
 }
 ```
+[1]:	https://travis-ci.org/saltzmanjoelh/S3Kit
+[2]:	https://swift.org "Swift"
+
+[image-1]:	https://travis-ci.org/saltzmanjoelh/S3Kit.svg?branch=master
+[image-2]:	https://img.shields.io/badge/swift-version%203-blue.svg
