@@ -86,10 +86,10 @@ public struct S3 {
         request.addValue("file/\(fileURL.pathExtension)", forHTTPHeaderField: "Content-Type")
         
         //send the request
-        var data: NSData?, response: URLResponse?, error: NSError?
+        var data: Data?, response: URLResponse?, error: NSError?
         let semaphore = DispatchSemaphore(value: 0)
         URLSession.shared.dataTask(with: request as URLRequest) { (d:Data?, r:URLResponse?, e:Error?) -> Void in
-            data = d as NSData?
+            data = d
             response = r
             error = e as NSError?
             semaphore.signal()
@@ -109,8 +109,8 @@ public struct S3 {
         }
         if urlResponse.statusCode != 200 {
             var description = ""
-            if data != nil {
-                if let text = NSString(data:data as! Data, encoding:String.Encoding.utf8.rawValue) as? String {
+            if let theData = data {
+                if let text = String.init(data: theData, encoding: .utf8) {
                     description += "\n\(text)"
                 }
                 throw S3KitError.aws(message: description)
@@ -150,11 +150,11 @@ public struct S3 {
             response = $1; error = $2 as NSError?
             var description = ""
             if let data = $0 {
-                if let text = NSString(data:data, encoding:String.Encoding.utf8.rawValue) as? String {
+                if let text = String.init(data: data, encoding: .utf8) {
                     description += "\n\(text)"
                 }
             }
-            print("request: \(request.allHTTPHeaderFields)\n\nresponse: \(response?.description)\n\ndescription: \(description)")
+            print("request: \(String(describing: request.allHTTPHeaderFields))\n\nresponse: \(String(describing: response?.description))\n\ndescription: \(description)")
             semaphore.signal()
             }.resume()
         let timeoutResult = semaphore.wait(timeout: DispatchTime.distantFuture)
