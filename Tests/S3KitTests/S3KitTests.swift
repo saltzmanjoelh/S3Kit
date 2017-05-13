@@ -6,8 +6,8 @@ class S3KitTests: XCTestCase {
     //change these
     let bucket = "saltzman.test"
 //    let region = "us-east-1"
-    let key = "AKIAJYPKZDD7IU7HAYSQ"
-    let secret = "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"
+    let key = ProcessInfo.processInfo.environment["KEY"]!
+    let secret = ProcessInfo.processInfo.environment["SECRET"]!
     let path = "/tmp/testfile.txt"
 //    let credentialsPath = "/Users/joelsaltzman/Sites/S3Kit/s3Credentials.csv"
     
@@ -21,8 +21,8 @@ class S3KitTests: XCTestCase {
             let result = try S3.with(key: key, and: secret).upload(file: fileURL, to: bucket)
             
             var description = result.response.description
-            if let data = result.data as? Data {
-                if let text = NSString(data:data, encoding:String.Encoding.utf8.rawValue) as? String {
+            if let data = result.data {
+                if let text = String.init(data: data as Data, encoding: .utf8) {
                     description += "\n\(text)"
                 }
             }
