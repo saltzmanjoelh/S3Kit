@@ -120,7 +120,7 @@ public struct S3 {
         }
         
         
-        return (data! as NSData?, urlResponse)
+        return (data as NSData?, urlResponse)
     }
     
     
