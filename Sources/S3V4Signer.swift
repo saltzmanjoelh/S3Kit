@@ -140,7 +140,7 @@ public struct S3V4Signer {
 
     private func signature(url: URL, headers: [String: String], datetime: String, httpMethod: String, bodyDigest: String) throws -> String {
         let secret = NSString(format: "AWS4%@", secretKey).data(using: String.Encoding.utf8.rawValue)!
-        let date = hmac(string: datetime.substring(to: datetime.characters.index(datetime.startIndex, offsetBy: 8))
+        let date = hmac(string: String(datetime[datetime.startIndex..<datetime.index(datetime.startIndex, offsetBy: 8)])
             as NSString, key: secret as NSData)
         let region = hmac(string: regionName as NSString, key: date)
         let service = hmac(string: serviceName as NSString, key: region)
@@ -152,7 +152,7 @@ public struct S3V4Signer {
 
     private func credentialScope(datetime: String) -> String {
         return [
-            datetime.substring(to: datetime.characters.index(datetime.startIndex, offsetBy: 8)),
+            String(datetime[datetime.startIndex..<datetime.characters.index(datetime.startIndex, offsetBy: 8)]),
             regionName,
             serviceName,
             "aws4_request"
