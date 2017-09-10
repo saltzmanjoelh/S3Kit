@@ -20,4 +20,4 @@ if let data = result.data as? Data {
 [2]:	https://swift.org "Swift"
 
 [image-1]:	https://travis-ci.org/saltzmanjoelh/S3Kit.svg?branch=master
-[image-2]:	https://img.shields.io/badge/swift-version%203-blue.svg
+[image-2]:	https://img.shields.io/badge/swift-version%204-blue.svg

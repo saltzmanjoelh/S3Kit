@@ -1,0 +1,3 @@
+update-macos-packages:
+  --generate: 1
+  --symlink: 1

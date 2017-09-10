@@ -1,20 +1,28 @@
+// swift-tools-version:4.0
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
 import PackageDescription
 
-#if os(macOS)
 let package = Package(
     name: "S3Kit",
+    products: [
+        // Products define the executables and libraries produced by a package, and make them visible to other packages.
+        .library(
+            name: "S3Kit",
+            targets: ["S3Kit"]),
+    ],
     dependencies: [
-        .Package(url: "https://github.com/saltzmanjoelh/CCommonCrypto.git", versions: Version(0,0,0)..<Version(10,0,0))
+        // Dependencies declare other packages that this package depends on.
+         .package(url: "https://github.com/saltzmanjoelh/CCommonCrypto.git", from: "1.0.0"),
+    ],
+    targets: [
+        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
+        // Targets can depend on other targets in this package, and on products in packages which this package depends on.
+        .target(
+            name: "S3Kit",
+            dependencies: []),
+        .testTarget(
+            name: "S3KitTests",
+            dependencies: ["S3Kit"]),
     ]
 )
-
-//#elseif os(Linux)
-//let package = Package(
-//    name: "S3Kit",
-//    dependencies: [
-//        .Package(url: "https://github.com/saltzmanjoelh/OpenSSL.git", versions: Version(0,0,0)..<Version(10,0,0))
-//    ]
-//)
-    
-#endif
-//  https://github.com/csexton/csexton.github.com/blob/master/_posts/2016-03-20-signing-aws-api-requests-in-swift.md
