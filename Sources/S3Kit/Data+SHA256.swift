@@ -8,7 +8,7 @@
 
 import Foundation
 #if os(macOS)
-    import CCommonCrypto
+    import CommonCrypto
 //#elseif os(Linux)
 //    import OpenSSL
 //    typealias CC_SHA256_DIGEST_LENGTH = SHA256_DIGEST_LENGTH

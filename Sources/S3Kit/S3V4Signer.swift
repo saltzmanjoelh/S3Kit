@@ -8,7 +8,7 @@
 
 import Foundation
 #if os(macOS)
-    import CCommonCrypto
+    import CommonCrypto
 //#elseif os(Linux)
 //    import OpenSSL
 #endif
