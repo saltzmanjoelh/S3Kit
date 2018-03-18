@@ -152,7 +152,7 @@ public struct S3V4Signer {
 
     private func credentialScope(datetime: String) -> String {
         return [
-            String(datetime[datetime.startIndex..<datetime.characters.index(datetime.startIndex, offsetBy: 8)]),
+            String(datetime[datetime.startIndex..<datetime.index(datetime.startIndex, offsetBy: 8)]),
             regionName,
             serviceName,
             "aws4_request"
