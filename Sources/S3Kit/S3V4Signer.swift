@@ -94,8 +94,8 @@ public struct S3V4Signer {
     private func timestamp(date: NSDate) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd'T'HHmmss'Z'"
-        formatter.timeZone = NSTimeZone(name: "UTC") as TimeZone!
-        formatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale!
+        formatter.timeZone = TimeZone.init(identifier: "UTC")
+        formatter.locale = Locale.init(identifier: "en_US_POSIX")
         return formatter.string(from: date as Date)
     }
 
