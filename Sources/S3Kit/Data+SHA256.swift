@@ -7,9 +7,9 @@
 //
 
 import Foundation
-#if os(macOS)
+#if !os(Linux)
     import CommonCrypto
-//#elseif os(Linux)
+//#else
 //    import OpenSSL
 //    typealias CC_SHA256_DIGEST_LENGTH = SHA256_DIGEST_LENGTH
 #endif
@@ -18,13 +18,13 @@ import Foundation
 public func sha256_hexdigest(_ data : Data) -> String {
     
     
-    #if os(macOS)
+    #if !os(Linux)
         var bytes = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
         _ = data.withUnsafeBytes{
             CC_SHA256($0, CC_LONG(data.count), &bytes)
         }
         //TODO: implement linux version
-//    #elseif os(Linux)
+//    #else
 //        let shaContext = UnsafeMutablePointer<SHA256_CTX>.allocate(capacity: 1)//(allocatingCapacity: 1)
 //        SHA256_Init(shaContext)
 //        _ = data.withUnsafeBytes{

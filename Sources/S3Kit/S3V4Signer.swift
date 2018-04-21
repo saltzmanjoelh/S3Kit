@@ -7,9 +7,9 @@
 //  https://github.com/csexton/csexton.github.com/blob/master/_posts/2016-03-20-signing-aws-api-requests-in-swift.md
 
 import Foundation
-#if os(macOS)
+#if !os(Linux)
     import CommonCrypto
-//#elseif os(Linux)
+//#else
 //    import OpenSSL
 #endif
 
@@ -32,7 +32,7 @@ public struct S3V4Signer {
         self.serviceName = serviceName
     }
 
-    public func signedHeaders(url: URL, bodyDigest: String, httpMethod: String, date: NSDate = NSDate()) throws -> [String: String] {
+    public func signedHeaders(url: URL, httpMethod: String, bodyDigest: String = "UNSIGNED-PAYLOAD", additionalHeaders: [String: String] = [:], date: NSDate = NSDate()) throws -> [String: String] {
         guard let host = url.host else {
             throw S3V4SignerError.invalidHost(host:url)
         }
@@ -40,13 +40,15 @@ public struct S3V4Signer {
         let datetime = timestamp(date: date)
 
         var headers = [
-            "x-amz-content-sha256": bodyDigest,
+            "content-type": "application/json",
             "x-amz-date": datetime,
-            "x-amz-acl" : "public-read",
+            "x-amz-content-sha256": bodyDigest,
             "Host": host,
             ]
+        for (key, value) in additionalHeaders {
+            headers[key] = value
+        }
         headers["Authorization"] = try authorization(url: url, headers: headers, datetime: datetime, httpMethod: httpMethod, bodyDigest: bodyDigest)
-
         return headers
     }
 

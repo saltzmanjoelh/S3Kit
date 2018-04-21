@@ -72,18 +72,21 @@ public struct S3 {
 
         //create an URL Request
         let request = NSMutableURLRequest(url: s3URL)
+        request.cachePolicy = .reloadIgnoringCacheData
         request.httpMethod = "PUT"
         request.httpBodyStream = fileStream
         
         //create the signed headers
-        let headers = try signer.signedHeaders(url: s3URL, bodyDigest: bodyDigest, httpMethod: "PUT")
+        var additionalHeaders = ["Content-Length": "\(fileData.count)"]
+        additionalHeaders["x-amz-acl"] = "authenticated-read"
+        let headers = try signer.signedHeaders(url: s3URL, httpMethod: "PUT", bodyDigest: bodyDigest, additionalHeaders: additionalHeaders)
         //set the headers on an URLRequest
         for (key, value) in headers {
             request.addValue(value, forHTTPHeaderField: key)
         }
         //don't forget the file details
-        request.addValue("\(fileData.count)", forHTTPHeaderField: "Content-Length")
-        request.addValue("file/\(fileURL.pathExtension)", forHTTPHeaderField: "Content-Type")
+//        request.addValue("\(fileData.count)", forHTTPHeaderField: "Content-Length")
+//        request.addValue("file/\(fileURL.pathExtension)", forHTTPHeaderField: "Content-Type")
         
         //send the request
         var data: Data?, response: URLResponse?, error: NSError?
@@ -137,7 +140,7 @@ public struct S3 {
         
         //create the signed headers
         let bodyDigest = sha256_hexdigest("".data(using: String.Encoding.utf8)!)
-        let headers = try signer.signedHeaders(url: s3URL, bodyDigest: bodyDigest, httpMethod: "HEAD")
+        let headers = try signer.signedHeaders(url: s3URL, httpMethod: "HEAD", bodyDigest: bodyDigest)
         //set the headers on an URLRequest
         for (key, value) in headers {
             request.addValue(value, forHTTPHeaderField: key)
@@ -154,7 +157,7 @@ public struct S3 {
                     description += "\n\(text)"
                 }
             }
-            print("request: \(String(describing: request.allHTTPHeaderFields))\n\nresponse: \(String(describing: response?.description))\n\ndescription: \(description)")
+//            print("request: \(String(describing: request.allHTTPHeaderFields))\n\nresponse: \(String(describing: response?.description))\n\ndescription: \(description)")
             semaphore.signal()
             }.resume()
         let timeoutResult = semaphore.wait(timeout: DispatchTime.distantFuture)
@@ -169,5 +172,25 @@ public struct S3 {
             throw S3KitError.noResponse
         }
         return urlResponse.statusCode == 200
+    }
+    
+    public func downloadRequest(forFile fileURL: URL, fromBucket bucket: String, inRegion region: String = "us-east-1") throws -> URLRequest {
+        
+        let s3URL = URL(string: "https://s3.amazonaws.com/\(bucket)/\(fileURL.lastPathComponent)")!
+        let signer = S3V4Signer(accessKey: key, secretKey: secret, regionName: region)//create the signer
+        
+        //create an URL Request
+        var request = URLRequest(url: s3URL)
+        request.httpMethod = "GET"
+        request.cachePolicy = .reloadIgnoringCacheData
+        
+        //create the signed headers
+        let headers = try signer.signedHeaders(url: s3URL, httpMethod: "GET")
+        //set the headers on an URLRequest
+        for (key, value) in headers {
+            request.addValue(value, forHTTPHeaderField: key)
+        }
+        
+        return request
     }
 }
