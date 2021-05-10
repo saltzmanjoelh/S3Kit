@@ -4,7 +4,7 @@
 
 ⚠️ **** DEPRECATED *** ⚠️ 
 
-Use (Soto)[https://github.com/soto-project/soto] instead
+Use [Soto](https://github.com/soto-project/soto) instead
 
 Easily upload files to S3\. Doesn't work in Linux at the moment
 
