@@ -2,6 +2,9 @@
 
 [![Build Status][image-1]][1] [![Swift Version][image-2]][2]
 
+⚠️ **** DEPRECATED *** ⚠️ 
+Use (Soto)[https://github.com/soto-project/soto] instead
+
 Easily upload files to S3\. Doesn't work in Linux at the moment
 
 TODO: Add Linux compatibility
